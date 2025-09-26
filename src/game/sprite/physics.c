@@ -44,13 +44,23 @@ static double nearest_grid_collision(const struct sprite *sprite,uint8_t dir) {
   int rowz=(int)(b-fudge); if (rowz>=NS_sys_maph) rowz=NS_sys_maph-1;
   if ((cola>colz)||(rowa>rowz)) return 0.0;
   // Walk outward from the sprite until the edge, stopping at the first solid cell.
+  // We're starting at the sprite's far edge. If we get something negativer than half a meter, ignore it.
+  // That does happen, due to round-off error. Without this correction, you can get stuck in certain walls by walking into them, then turning around.
+  #define RESULT(calc) { \
+    double result=(calc); \
+    if (result<-0.5) { \
+      /* Too negative; ignore it. */ \
+    } else { \
+      return result; \
+    } \
+  }
   switch (dir) {
     case 0x40: { // rowz..0
         int colc=colz-cola+1;
         int row=rowz;
         const uint8_t *mapp=g.scene.map+row*NS_sys_mapw+cola;
         for (;row>=0;row--,mapp-=NS_sys_mapw) {
-          if (grid_row_is_solid(mapp,colc)) return t-(row+1.0);
+          if (grid_row_is_solid(mapp,colc)) RESULT(t-(row+1.0))
         }
       } break;
     case 0x10: { // colz..0
@@ -58,7 +68,7 @@ static double nearest_grid_collision(const struct sprite *sprite,uint8_t dir) {
         int col=colz;
         const uint8_t *mapp=g.scene.map+rowa*NS_sys_mapw+col;
         for (;col>=0;col--,mapp--) {
-          if (grid_column_is_solid(mapp,rowc)) return l-(col+1.0);
+          if (grid_column_is_solid(mapp,rowc)) RESULT(l-(col+1.0))
         }
       } break;
     case 0x08: { // cola..mapw-1
@@ -66,7 +76,7 @@ static double nearest_grid_collision(const struct sprite *sprite,uint8_t dir) {
         int col=cola;
         const uint8_t *mapp=g.scene.map+rowa*NS_sys_mapw+col;
         for (;col<NS_sys_mapw;col++,mapp++) {
-          if (grid_column_is_solid(mapp,rowc)) return col-r;
+          if (grid_column_is_solid(mapp,rowc)) RESULT(col-r)
         }
       } break;
     case 0x02: { // rowa..maph-1
@@ -74,10 +84,11 @@ static double nearest_grid_collision(const struct sprite *sprite,uint8_t dir) {
         int row=rowa;
         const uint8_t *mapp=g.scene.map+row*NS_sys_mapw+cola;
         for (;row<NS_sys_maph;row++,mapp+=NS_sys_mapw) {
-          if (grid_row_is_solid(mapp,colc)) return row-b;
+          if (grid_row_is_solid(mapp,colc)) RESULT(row-b)
         }
       } break;
   }
+  #undef RESULT
   return 999.999;
 }
 
