@@ -18,6 +18,7 @@ struct scene {
   const uint8_t *map; // (NS_sys_mapw*NS_sys_maph)
   double strikeclock;
   int strikex,strikey;
+  double deathclock;
 };
 
 void scene_update(struct scene *scene,double elapsed,int input,int pvinput);
@@ -28,5 +29,6 @@ int scene_begin(struct scene *scene,int mapid);
 struct sprite *scene_spawn_sprite(struct scene *scene,double x,double y,int spriteid,uint32_t arg);
 
 void scene_highlight_strike(struct scene *scene,double x,double y);
+void scene_begin_death(struct scene *scene);
 
 #endif

@@ -24,7 +24,7 @@ For [Code For A Cause Micro Jam 2](https://itch.io/jam/cfac-x-micro-2), theme "T
 - [x] Swing blade.
 - [ ] Monsters.
 - [x] Destroyable static items.
-- [ ] Static hazards.
+- [x] Static hazards.
 - [ ] Flight training level, fly thru the rings or something.
 - [ ] Combat training level, whack cardboard cutouts when they pop up. (but not the nun or the child, just the gangsters).
 - [ ] Scorekeeping.

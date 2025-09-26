@@ -15,6 +15,7 @@ struct sprite_hero {
   double fanimclock;
   int fanimframe;
   double swingclock; // Counts up. Set ever so slighly positive to start the animation. All effects happen at the start.
+  int qx,qy;
 };
 
 #define SPRITE ((struct sprite_hero*)sprite)
@@ -36,7 +37,21 @@ static int _hero_init(struct sprite *sprite) {
   sprite->solid=1;
   SPRITE->gravity=GRAVITY_START;
   SPRITE->seated=1;
+  SPRITE->qx=-1;
+  SPRITE->qy=-1;
   return 0;
+}
+
+/* Die.
+ */
+ 
+static void hero_die(struct sprite *sprite) {
+  scene_begin_death(&g.scene);
+  sprite->defunct=1;
+  int angle=0;
+  for (;angle<0x100;angle+=0x10) {
+    struct sprite *soulball=scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,angle);
+  }
 }
 
 /* Swing.
@@ -198,6 +213,23 @@ static void hero_animate(struct sprite *sprite,double elapsed) {
   }
 }
 
+/* Update quantized position, and trigger actions if we change cell.
+ */
+ 
+static void hero_check_qpos(struct sprite *sprite) {
+  int x=(int)sprite->x;
+  int y=(int)sprite->y;
+  if ((x==SPRITE->qx)&&(y==SPRITE->qy)) return;
+  SPRITE->qx=x;
+  SPRITE->qy=y;
+  if ((x>=0)&&(y>=0)&&(x<NS_sys_mapw)&&(y<NS_sys_maph)) {
+    uint8_t physics=g.physics[g.scene.map[y*NS_sys_mapw+x]];
+    switch (physics) {
+      case NS_physics_hazard: hero_die(sprite); break;
+    }
+  }
+}
+
 /* Update.
  */
  
@@ -212,6 +244,7 @@ static void _hero_update(struct sprite *sprite,double elapsed) {
   } else {
     hero_fly_none(sprite,elapsed);
   }
+  hero_check_qpos(sprite);
   hero_animate(sprite,elapsed);
 }
 

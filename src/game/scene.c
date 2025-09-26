@@ -10,6 +10,9 @@ void scene_update(struct scene *scene,double elapsed,int input,int pvinput) {
   if (scene->strikeclock>0.0) {
     scene->strikeclock-=elapsed;
   }
+  if (scene->deathclock>0.0) {
+    scene->deathclock+=elapsed;
+  }
 
   if (input!=pvinput) {
     if (scene->hero) sprite_hero_input(scene->hero,input,pvinput);
@@ -57,7 +60,9 @@ void scene_render(struct scene *scene) {
   /* Sky.
    */
   uint32_t skycolor=0x96d8eeff;
-  if (scene->strikeclock>0.0) {
+  if (scene->deathclock>0.0) {
+    skycolor=rgba_blend(skycolor,0x801020ff,scene->deathclock/2.000);
+  } else if (scene->strikeclock>0.0) {
     skycolor=rgba_blend(skycolor,0x204060ff,scene->strikeclock/STRIKE_HIGHLIGHT_TIME);
   }
   graf_fill_rect(&g.graf,0,0,FBW,FBH,skycolor);
@@ -86,6 +91,14 @@ void scene_render(struct scene *scene) {
     int dstx=(int)(sprite->x*NS_sys_tilesize);
     int dsty=(int)(sprite->y*NS_sys_tilesize);
     graf_tile(&g.graf,dstx,dsty,sprite->tileid,sprite->xform);
+  }
+  
+  /* When the death clock has advanced pretty far (bg already red), fade in another red overlay to make the foreground appear to fade out.
+   */
+  if (scene->deathclock>2.000) {
+    int alpha=(scene->deathclock-2.0)*64.0;
+    if (alpha<0) alpha=0; else if (alpha>0xc0) alpha=0xc0;
+    graf_fill_rect(&g.graf,0,0,FBW,FBH,0x80102000|alpha);
   }
   
   /* TODO Overlay?
@@ -191,6 +204,8 @@ int scene_begin(struct scene *scene,int mapid) {
     scene->spritec--;
     sprite_del(scene->spritev[scene->spritec]);
   }
+  scene->strikeclock=0.0;
+  scene->deathclock=0.0;
   
   struct cmdlist_reader reader;
   if (cmdlist_reader_init(&reader,res.cmd,res.cmdc)<0) return -1;
@@ -220,4 +235,11 @@ void scene_highlight_strike(struct scene *scene,double x,double y) {
   scene->strikeclock=STRIKE_HIGHLIGHT_TIME;
   scene->strikex=(int)(x*NS_sys_tilesize)-NS_sys_tilesize;
   scene->strikey=(int)(y*NS_sys_tilesize)-NS_sys_tilesize;
+}
+
+/* Begin death.
+ */
+ 
+void scene_begin_death(struct scene *scene) {
+  scene->deathclock=0.001;
 }

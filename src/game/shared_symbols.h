@@ -22,14 +22,17 @@
 #define NS_tilesheet_weight 0
 
 #define NS_physics_solid 1
+#define NS_physics_hazard 2
 
 #define NS_sprtype_dummy 0
 #define NS_sprtype_hero 1
 #define NS_sprtype_box 2 /* Solid and destroyable. */
+#define NS_sprtype_soulball 3
 
 #define FOR_EACH_SPRTYPE \
   _(dummy) \
   _(hero) \
-  _(box)
+  _(box) \
+  _(soulball)
 
 #endif
