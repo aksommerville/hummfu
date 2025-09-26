@@ -1,9 +1,15 @@
 #include "hummfu.h"
 
+#define STRIKE_HIGHLIGHT_TIME 0.100
+
 /* Update.
  */
  
 void scene_update(struct scene *scene,double elapsed,int input,int pvinput) {
+
+  if (scene->strikeclock>0.0) {
+    scene->strikeclock-=elapsed;
+  }
 
   if (input!=pvinput) {
     if (scene->hero) sprite_hero_input(scene->hero,input,pvinput);
@@ -27,13 +33,51 @@ void scene_update(struct scene *scene,double elapsed,int input,int pvinput) {
   }
 }
 
+/* Blend RGBA.
+ * It's private so we can assume alpha is always one.
+ */
+ 
+static uint32_t rgba_blend(uint32_t a,uint32_t z,double p) {
+  if (p<=0.0) return a;
+  if (p>=1.0) return z;
+  double inv=1.0-p;
+  uint8_t ar=a>>24,ag=a>>16,ab=a>>8;
+  uint8_t zr=z>>24,zg=z>>16,zb=z>>8;
+  int r=(int)(ar*inv+zr*p); if (r<0) r=0; else if (r>0xff) r=0xff;
+  int g=(int)(ag*inv+zg*p); if (g<0) g=0; else if (g>0xff) g=0xff;
+  int b=(int)(ab*inv+zb*p); if (b<0) b=0; else if (b>0xff) b=0xff;
+  return (r<<24)|(g<<16)|(b<<8)|0xff;
+}
+
 /* Render.
  */
  
 void scene_render(struct scene *scene) {
-  graf_fill_rect(&g.graf,0,0,FBW,FBH,0x808080ff);
+
+  /* Sky.
+   */
+  uint32_t skycolor=0x96d8eeff;
+  if (scene->strikeclock>0.0) {
+    skycolor=rgba_blend(skycolor,0x204060ff,scene->strikeclock/STRIKE_HIGHLIGHT_TIME);
+  }
+  graf_fill_rect(&g.graf,0,0,FBW,FBH,skycolor);
+  if (scene->strikeclock>0.0) {
+    int alpha=(scene->strikeclock*255.0)/STRIKE_HIGHLIGHT_TIME;
+    if (alpha>0) {
+      graf_set_input(&g.graf,g.texid_sprites);
+      if (alpha<0xff) graf_set_alpha(&g.graf,alpha);
+      graf_decal(&g.graf,scene->strikex,scene->strikey,0,32,32,32);
+      graf_set_alpha(&g.graf,0xff);
+    }
+  }
+  
+  /* Terrain.
+   */
   graf_set_input(&g.graf,scene->bgtexid);
   graf_decal(&g.graf,0,0,0,0,FBW,FBH);
+  
+  /* Sprites.
+   */
   graf_set_input(&g.graf,g.texid_sprites);
   int i=0;
   for (;i<scene->spritec;i++) {
@@ -43,6 +87,9 @@ void scene_render(struct scene *scene) {
     int dsty=(int)(sprite->y*NS_sys_tilesize);
     graf_tile(&g.graf,dstx,dsty,sprite->tileid,sprite->xform);
   }
+  
+  /* TODO Overlay?
+   */
 }
 
 /* Render static map to bgtexid.
@@ -164,4 +211,13 @@ int scene_begin(struct scene *scene,int mapid) {
   g.gameover.active=0;
   scene->active=1;
   return 0;
+}
+
+/* Highlight strike.
+ */
+ 
+void scene_highlight_strike(struct scene *scene,double x,double y) {
+  scene->strikeclock=STRIKE_HIGHLIGHT_TIME;
+  scene->strikex=(int)(x*NS_sys_tilesize)-NS_sys_tilesize;
+  scene->strikey=(int)(y*NS_sys_tilesize)-NS_sys_tilesize;
 }

@@ -43,14 +43,39 @@ static int _hero_init(struct sprite *sprite) {
  */
  
 static int hero_can_swing(const struct sprite *sprite) {
-  if (SPRITE->flying) return 0;
+  //if (SPRITE->flying) return 0;
   if (SPRITE->swingclock>0.0) return 0;
   return 1;
 }
 
 static int hero_strike_foes(struct sprite *sprite) {
-  fprintf(stderr,"TODO: %s\n",__func__);//TODO
-  return 1;
+  const double width=0.500; // Extension from sprite's forward physical edge.
+  double t=sprite->y+sprite->pt;
+  double b=sprite->y+sprite->pb;
+  double l,r;
+  if (sprite->xform&EGG_XFORM_XREV) { // Facing left.
+    r=sprite->x+sprite->pl;
+    l=r-width;
+  } else {
+    l=sprite->x+sprite->pr;
+    r=l+width;
+  }
+  int victimc=0;
+  int i=g.scene.spritec;
+  struct sprite **p=g.scene.spritev;
+  for (;i-->0;p++) {
+    struct sprite *victim=*p;
+    if (!victim->type->strike) continue;
+    if (victim->defunct) continue;
+    double vl=victim->x+victim->pl; if (vl>=r) continue;
+    double vr=victim->x+victim->pr; if (vr<=l) continue;
+    double vt=victim->y+victim->pt; if (vt>=b) continue;
+    double vb=victim->y+victim->pb; if (vb<=t) continue;
+    if (victim->type->strike(victim,sprite)) {
+      victimc++;
+    }
+  }
+  return victimc;
 }
 
 /* Input.
@@ -60,6 +85,7 @@ void sprite_hero_input(struct sprite *sprite,int input,int pvinput) {
   if ((input&EGG_BTN_WEST)&&!(pvinput&EGG_BTN_WEST)) {
     if (hero_can_swing(sprite)) {
       SPRITE->swingclock=0.001; // Start animation.
+      scene_highlight_strike(&g.scene,sprite->x+((sprite->xform&EGG_XFORM_XREV)?-0.250:0.250),sprite->y);
       if (hero_strike_foes(sprite)) {
         egg_play_sound(RID_sound_swinghit,0.5,0.0);
       } else {

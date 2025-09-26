@@ -68,6 +68,9 @@ void egg_client_update(double elapsed) {
   int input=egg_input_get_one(0);
   int pvinput=g.pvinput;
   if (input!=g.pvinput) {
+    if ((input&EGG_BTN_AUX1)&&!(pvinput&EGG_BTN_AUX1)) { //XXX Highly temporary: AUX1 to reload map:1
+      scene_begin(&g.scene,1);
+    }
     g.pvinput=input;
   }
   

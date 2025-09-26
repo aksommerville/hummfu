@@ -32,6 +32,10 @@ struct sprite_type {
   int (*init)(struct sprite *sprite);
   
   void (*update)(struct sprite *sprite,double elapsed);
+  
+  /* Return nonzero if the strike is successful, zero if inert eg already dead.
+   */
+  int (*strike)(struct sprite *sprite,struct sprite *assailant);
 };
 
 void sprite_del(struct sprite *sprite);
