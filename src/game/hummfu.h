@@ -24,6 +24,7 @@ extern struct g {
   int framec;
   int texid_sprites;
   int texid_terrain;
+  uint8_t physics[256]; // tilesheet:terrain; captured at init
   
   // No generalized modes. We're doing one of these three things.
   struct scene scene;

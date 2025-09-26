@@ -19,6 +19,7 @@ For [Code For A Cause Micro Jam 2](https://itch.io/jam/cfac-x-micro-2), theme "T
 
 ## TODO
 
+- [x] General sprite physics.
 - [ ] Hero movement.
 - [ ] Swing blade.
 - [ ] Monsters.

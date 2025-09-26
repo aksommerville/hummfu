@@ -25,9 +25,11 @@
 
 #define NS_sprtype_dummy 0
 #define NS_sprtype_hero 1
+#define NS_sprtype_box 2 /* Solid and destroyable. */
 
 #define FOR_EACH_SPRTYPE \
   _(dummy) \
-  _(hero)
+  _(hero) \
+  _(box)
 
 #endif

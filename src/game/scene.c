@@ -134,6 +134,7 @@ int scene_begin(struct scene *scene,int mapid) {
     fprintf(stderr,"map:%d dimensions %dx%d, expected %dx%d\n",mapid,res.w,res.h,NS_sys_mapw,NS_sys_maph);
     return -1;
   }
+  scene->map=res.v;
   if (scene_render_bgtex(scene,&res)<0) return -1;
   scene->mapid=mapid;
   

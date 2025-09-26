@@ -5,6 +5,19 @@ struct g g={0};
 void egg_client_quit(int status) {
 }
 
+/* Load the terrain tilesheet to (g.physics).
+ */
+ 
+static void load_physics(const void *v,int c) {
+  struct tilesheet_reader reader;
+  if (tilesheet_reader_init(&reader,v,c)<0) return;
+  struct tilesheet_entry entry;
+  while (tilesheet_reader_next(&entry,&reader)>0) {
+    if (entry.tableid!=NS_tilesheet_physics) continue;
+    memcpy(g.physics+entry.tileid,entry.v,entry.c);
+  }
+}
+
 /* Init.
  */
 
@@ -33,6 +46,8 @@ int egg_client_init() {
       g.resa=na;
     }
     g.resv[g.resc++]=res;
+    // As long as we're iterating these, capture any global resources we need:
+    if ((res.tid==EGG_TID_tilesheet)&&(res.rid==RID_tilesheet_terrain)) load_physics(res.v,res.c);
   }
   
   if (egg_texture_load_image(g.texid_sprites=egg_texture_new(),RID_image_sprites)<0) return -1;

@@ -15,6 +15,7 @@ struct scene {
   struct sprite **spritev;
   int spritec,spritea;
   struct sprite *hero; // WEAK, OPTIONAL
+  const uint8_t *map; // (NS_sys_mapw*NS_sys_maph)
 };
 
 void scene_update(struct scene *scene,double elapsed,int input,int pvinput);

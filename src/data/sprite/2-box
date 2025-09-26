@@ -1,0 +1,3 @@
+image image:sprites
+tile 16 0
+type (u16:sprtype)box
