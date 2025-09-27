@@ -8,7 +8,7 @@
 #define SPEED 4.000
 #define SPEED_EXTRA 2.000
 #define GRAVITY 9.000
-#define WAVE_DELAY 0.400
+#define WAVE_DELAY 0.200
 
 struct sprite_soulball {
   struct sprite hdr;
