@@ -28,24 +28,27 @@ void scene_update(struct scene *scene,double elapsed,int input,int pvinput) {
   }
   if (scene->winclock>0.0) {
     scene->winclock+=elapsed;
+    if (scene->hero) sprite_hero_input(scene->hero,0,pvinput);
+  }
+  if (scene->fadein>0.0) {
+    scene->fadein-=elapsed;
+    //input=pvinput=0;
   }
 
   if (input!=pvinput) {
     if (scene->hero) {
-      if (scene->winclock>0.0) sprite_hero_input(scene->hero,0,pvinput);
-      else sprite_hero_input(scene->hero,input,pvinput);
+      if (scene->winclock<=0.0) sprite_hero_input(scene->hero,input,pvinput);
     } else if (scene->deathclock>=0.500) {
       if ((input&EGG_BTN_SOUTH)&&!(pvinput&EGG_BTN_SOUTH)) {
         scene_begin(scene,scene->mapid);
+        scene_no_fade_in(scene);
       }
     }
-    if (scene->winclock>1.000) {
-      if ((input&EGG_BTN_SOUTH)&&!(pvinput&EGG_BTN_SOUTH)) {
-        if (scene_begin(scene,scene->mapid+1)<0) {
-          gameover_begin(&g.gameover);
-          return;
-        }
-      }
+  }
+  if (scene->winclock>1.500) {
+    if (scene_begin(scene,scene->mapid+1)<0) {
+      gameover_begin(&g.gameover);
+      return;
     }
   }
 
@@ -119,9 +122,14 @@ void scene_render(struct scene *scene) {
   for (;i<scene->spritec;i++) {
     struct sprite *sprite=scene->spritev[i];
     if (sprite->defunct) continue;
-    int dstx=(int)(sprite->x*NS_sys_tilesize);
-    int dsty=(int)(sprite->y*NS_sys_tilesize);
-    graf_tile(&g.graf,dstx,dsty,sprite->tileid,sprite->xform);
+    if (sprite->type->render) {
+      sprite->type->render(sprite);
+      graf_set_input(&g.graf,g.texid_sprites);
+    } else {
+      int dstx=(int)(sprite->x*NS_sys_tilesize);
+      int dsty=(int)(sprite->y*NS_sys_tilesize);
+      graf_tile(&g.graf,dstx,dsty,sprite->tileid,sprite->xform);
+    }
   }
   
   /* When the death clock has advanced pretty far (bg already red), fade in another red overlay to make the foreground appear to fade out.
@@ -131,9 +139,13 @@ void scene_render(struct scene *scene) {
     int alpha=(scene->deathclock-2.0)*64.0;
     if (alpha<0) alpha=0; else if (alpha>0xc0) alpha=0xc0;
     graf_fill_rect(&g.graf,0,0,FBW,FBH,0x80102000|alpha);
-  } else if (scene->winclock>0.500) {
-    int alpha=((scene->winclock-0.500)*256.0);
-    if (alpha<0) alpha=0; else if (alpha>0xe0) alpha=0xe0;
+  } else if (scene->winclock>0.250) {
+    int alpha=((scene->winclock-0.250)*256.0);
+    if (alpha<0) alpha=0; else if (alpha>0xff) alpha=0xff;
+    graf_fill_rect(&g.graf,0,0,FBW,FBH,WIN_COLOR|alpha);
+  } else if (scene->fadein>0.0) {
+    int alpha=(int)(scene->fadein*256.0);
+    if (alpha<0) alpha=0; else if (alpha>0xff) alpha=0xff;
     graf_fill_rect(&g.graf,0,0,FBW,FBH,WIN_COLOR|alpha);
   }
   
@@ -149,6 +161,7 @@ static int scene_render_bgtex(struct scene *scene,const struct map_res *res) {
     if ((scene->bgtexid=egg_texture_new())<1) return -1;
     if (egg_texture_load_raw(scene->bgtexid,FBW,FBH,FBW<<2,0,0)<0) return -1;
   }
+  egg_texture_clear(scene->bgtexid);
   struct egg_render_uniform un={
     .mode=EGG_RENDER_TILE,
     .dsttexid=scene->bgtexid,
@@ -245,6 +258,7 @@ int scene_begin(struct scene *scene,int mapid) {
   scene->strikeclock=0.0;
   scene->deathclock=0.0;
   scene->winclock=0.0;
+  scene->fadein=0.500;
   
   struct cmdlist_reader reader;
   if (cmdlist_reader_init(&reader,res.cmd,res.cmdc)<0) return -1;
@@ -261,7 +275,6 @@ int scene_begin(struct scene *scene,int mapid) {
     }
   }
   
-  g.hello.active=0;
   g.gameover.active=0;
   scene->active=1;
   return 0;
@@ -287,4 +300,8 @@ void scene_begin_death(struct scene *scene) {
 void scene_begin_victory(struct scene *scene) {
   if ((scene->winclock>0.0)||(scene->deathclock>0.0)) return;
   scene->winclock=0.001;
+}
+
+void scene_no_fade_in(struct scene *scene) {
+  scene->fadein=0.0;
 }

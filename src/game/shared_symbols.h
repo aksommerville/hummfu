@@ -30,6 +30,7 @@
 #define NS_sprtype_soulball 3
 #define NS_sprtype_flower 4
 #define NS_sprtype_toast 5
+#define NS_sprtype_title 6
 
 #define FOR_EACH_SPRTYPE \
   _(dummy) \
@@ -37,6 +38,7 @@
   _(box) \
   _(soulball) \
   _(flower) \
-  _(toast)
+  _(toast) \
+  _(title)
 
 #endif

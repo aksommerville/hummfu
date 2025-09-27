@@ -53,11 +53,14 @@ int egg_client_init() {
   if (egg_texture_load_image(g.texid_sprites=egg_texture_new(),RID_image_sprites)<0) return -1;
   if (egg_texture_load_image(g.texid_terrain=egg_texture_new(),RID_image_terrain)<0) return -1;
   
+  if (!(g.font=font_new())) return -1;
+  const char *msg;
+  if (msg=font_add_image(g.font,RID_image_font9_0020,0x0020)) { fprintf(stderr,"ERROR: %s\n",msg); return -1; }
+  
   srand_auto();
 
-  // XXX Should be hello ultimately.
-  //if (hello_begin(&g.hello)<0) return -1;
   if (scene_begin(&g.scene,1)<0) return -1;
+  scene_no_fade_in(&g.scene);
 
   return 0;
 }
@@ -77,9 +80,8 @@ void egg_client_update(double elapsed) {
   }
   
   if (g.scene.active) scene_update(&g.scene,elapsed,input,pvinput);
-  else if (g.hello.active) hello_update(&g.hello,elapsed,input,pvinput);
   else if (g.gameover.active) gameover_update(&g.gameover,elapsed,input,pvinput);
-  else if (hello_begin(&g.hello)<0) egg_terminate(1);
+  else if (scene_begin(&g.scene,1)<0) egg_terminate(1);
 }
 
 /* Render.
@@ -89,7 +91,6 @@ void egg_client_render() {
   g.framec++;
   graf_reset(&g.graf);
   if (g.scene.active) scene_render(&g.scene);
-  else if (g.hello.active) hello_render(&g.hello);
   else if (g.gameover.active) gameover_render(&g.gameover);
   graf_flush(&g.graf);
 }
@@ -110,6 +111,30 @@ int hummfu_get_res(void *dstpp,int tid,int rid) {
       *(const void**)dstpp=q->v;
       return q->c;
     }
+  }
+  return 0;
+}
+
+/* Render text label.
+ */
+
+int hummfu_load_label(int *w,int *h,int ix) {
+  const void *serial=0;
+  int serialc=hummfu_get_res(&serial,EGG_TID_strings,(egg_prefs_get(EGG_PREF_LANG)<<6)|1);
+  if (serialc<1) {
+    serialc=hummfu_get_res(&serial,EGG_TID_strings,(EGG_LANG_FROM_STRING("en")<<6)|1);
+    if (serialc<1) return 0;
+  }
+  struct strings_reader reader;
+  if (strings_reader_init(&reader,serial,serialc)<0) return 0;
+  struct strings_entry string;
+  while (strings_reader_next(&string,&reader)>0) {
+    if (string.index>ix) return 0;
+    if (string.index<ix) continue;
+    int texid=font_render_to_texture(0,g.font,string.v,string.c,FBW,FBH,0xffffffff);
+    if (texid<1) return 0;
+    egg_texture_get_size(w,h,texid);
+    return texid;
   }
   return 0;
 }

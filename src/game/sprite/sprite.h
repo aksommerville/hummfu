@@ -31,6 +31,11 @@ struct sprite_type {
    */
   int (*init)(struct sprite *sprite);
   
+  /* If implemented, nothing generic happens.
+   * If you can be rendered as a single tile from image:sprites, don't use this!
+   */
+  void (*render)(struct sprite *sprite);
+  
   void (*update)(struct sprite *sprite,double elapsed);
   
   /* Return nonzero if the strike is successful, zero if inert eg already dead.

@@ -40,6 +40,7 @@ static int _hero_init(struct sprite *sprite) {
   SPRITE->seated=1;
   SPRITE->qx=-1;
   SPRITE->qy=-1;
+  sprite->y+=0.500-sprite->pb;
   return 0;
 }
 
