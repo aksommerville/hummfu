@@ -28,10 +28,10 @@ void gameover_render(struct gameover *gameover) {
 int gameover_begin(struct gameover *gameover) {
   g.scene.active=0;
   gameover->active=1;
+  egg_play_song(RID_song_peace_returns,0,0);
   
   if (!gameover->msg_texid) {
     gameover->msg_texid=hummfu_load_label(&gameover->msg_w,&gameover->msg_h,6);
-    fprintf(stderr,"texid=%d w=%d h=%d\n",gameover->msg_texid,gameover->msg_w,gameover->msg_h);
   }
   //TODO
   return 0;
