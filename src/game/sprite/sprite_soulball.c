@@ -1,5 +1,5 @@
 /* sprite_soulball.c
- * arg: u24=reserved, u8=angle
+ * arg: u16=reserved, u8=wave, u8=angle
  */
  
 #include "game/hummfu.h"
@@ -8,10 +8,12 @@
 #define SPEED 4.000
 #define SPEED_EXTRA 2.000
 #define GRAVITY 9.000
+#define WAVE_DELAY 0.400
 
 struct sprite_soulball {
   struct sprite hdr;
   int animframe;
+  double waitclock;
   double animclock;
   double dx,dy;
 };
@@ -19,8 +21,12 @@ struct sprite_soulball {
 #define SPRITE ((struct sprite_soulball*)sprite)
 
 static int _soulball_init(struct sprite *sprite) {
+  sprite->tileid=0x1a;
   SPRITE->animframe=rand()&7;
   SPRITE->animclock=((rand()&0xffff)*FRAME_TIME)/65535.0;
+  
+  uint8_t wave=sprite->arg>>8;
+  SPRITE->waitclock=wave*WAVE_DELAY;
   
   uint8_t angle=sprite->arg;
   double t=(angle*M_PI*2.0)/256.0;
@@ -32,6 +38,10 @@ static int _soulball_init(struct sprite *sprite) {
 }
 
 static void _soulball_update(struct sprite *sprite,double elapsed) {
+  if (SPRITE->waitclock>0.0) {
+    SPRITE->waitclock-=elapsed;
+    return;
+  }
   if ((SPRITE->animclock-=elapsed)<=0.0) {
     SPRITE->animclock+=FRAME_TIME;
     if (++(SPRITE->animframe)>=8) SPRITE->animframe=0;

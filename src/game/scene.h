@@ -19,6 +19,7 @@ struct scene {
   double strikeclock;
   int strikex,strikey;
   double deathclock;
+  int input_blackout;
 };
 
 void scene_update(struct scene *scene,double elapsed,int input,int pvinput);

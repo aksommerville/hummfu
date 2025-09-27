@@ -52,6 +52,8 @@ int egg_client_init() {
   
   if (egg_texture_load_image(g.texid_sprites=egg_texture_new(),RID_image_sprites)<0) return -1;
   if (egg_texture_load_image(g.texid_terrain=egg_texture_new(),RID_image_terrain)<0) return -1;
+  
+  srand_auto();
 
   // XXX Should be hello ultimately.
   //if (hello_begin(&g.hello)<0) return -1;

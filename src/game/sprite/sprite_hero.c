@@ -16,6 +16,7 @@ struct sprite_hero {
   int fanimframe;
   double swingclock; // Counts up. Set ever so slighly positive to start the animation. All effects happen at the start.
   int qx,qy;
+  int input,pvinput;
 };
 
 #define SPRITE ((struct sprite_hero*)sprite)
@@ -48,10 +49,23 @@ static int _hero_init(struct sprite *sprite) {
 static void hero_die(struct sprite *sprite) {
   scene_begin_death(&g.scene);
   sprite->defunct=1;
-  int angle=0;
-  for (;angle<0x100;angle+=0x10) {
-    struct sprite *soulball=scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,angle);
-  }
+  
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000000);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000040);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000080);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x000000c0);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000120);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000160);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x000001a0);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x000001e0);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000210);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000230);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000250);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000270);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000290);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x000002b0);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x000002d0);
+  scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x000002f0);
 }
 
 /* Swing.
@@ -97,6 +111,8 @@ static int hero_strike_foes(struct sprite *sprite) {
  */
  
 void sprite_hero_input(struct sprite *sprite,int input,int pvinput) {
+  SPRITE->input=input;
+  SPRITE->pvinput=pvinput;
   if ((input&EGG_BTN_WEST)&&!(pvinput&EGG_BTN_WEST)) {
     if (hero_can_swing(sprite)) {
       SPRITE->swingclock=0.001; // Start animation.
@@ -234,12 +250,12 @@ static void hero_check_qpos(struct sprite *sprite) {
  */
  
 static void _hero_update(struct sprite *sprite,double elapsed) {
-  switch (g.pvinput&(EGG_BTN_LEFT|EGG_BTN_RIGHT)) {
+  switch (SPRITE->input&(EGG_BTN_LEFT|EGG_BTN_RIGHT)) {
     case EGG_BTN_LEFT: hero_walk(sprite,-1.0,elapsed); break;
     case EGG_BTN_RIGHT: hero_walk(sprite,1.0,elapsed); break;
     default: hero_walk_none(sprite,elapsed); break;
   }
-  if (g.pvinput&EGG_BTN_SOUTH) {
+  if (SPRITE->input&EGG_BTN_SOUTH) {
     hero_fly(sprite,elapsed);
   } else {
     hero_fly_none(sprite,elapsed);
