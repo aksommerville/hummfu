@@ -20,6 +20,7 @@ struct scene {
   int strikex,strikey;
   double deathclock;
   int input_blackout;
+  double winclock;
 };
 
 void scene_update(struct scene *scene,double elapsed,int input,int pvinput);
@@ -31,5 +32,6 @@ struct sprite *scene_spawn_sprite(struct scene *scene,double x,double y,int spri
 
 void scene_highlight_strike(struct scene *scene,double x,double y);
 void scene_begin_death(struct scene *scene);
+void scene_begin_victory(struct scene *scene);
 
 #endif

@@ -47,6 +47,7 @@ static int _hero_init(struct sprite *sprite) {
  */
  
 static void hero_die(struct sprite *sprite) {
+  if (g.scene.winclock>0.0) return;
   scene_begin_death(&g.scene);
   sprite->defunct=1;
   
@@ -78,15 +79,15 @@ static int hero_can_swing(const struct sprite *sprite) {
 }
 
 static int hero_strike_foes(struct sprite *sprite) {
-  const double width=0.500; // Extension from sprite's forward physical edge.
+  const double width=0.700; // Extension from sprite's forward physical edge.
   double t=sprite->y+sprite->pt;
   double b=sprite->y+sprite->pb;
   double l,r;
   if (sprite->xform&EGG_XFORM_XREV) { // Facing left.
-    r=sprite->x+sprite->pl;
+    r=sprite->x;
     l=r-width;
   } else {
-    l=sprite->x+sprite->pr;
+    l=sprite->x;
     r=l+width;
   }
   int victimc=0;

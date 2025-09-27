@@ -28,11 +28,15 @@
 #define NS_sprtype_hero 1
 #define NS_sprtype_box 2 /* Solid and destroyable. */
 #define NS_sprtype_soulball 3
+#define NS_sprtype_flower 4
+#define NS_sprtype_toast 5
 
 #define FOR_EACH_SPRTYPE \
   _(dummy) \
   _(hero) \
   _(box) \
-  _(soulball)
+  _(soulball) \
+  _(flower) \
+  _(toast)
 
 #endif

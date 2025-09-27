@@ -18,3 +18,6 @@ sprite @13,5 sprite:box (u32)0
 sprite @4,9 sprite:box (u32)0
 sprite @4,8 sprite:box (u32)0
 sprite @4,7 sprite:box (u32)0
+sprite @19,2 sprite:flower 0x0000001f
+sprite @8,7 sprite:flower 0x0000001d
+sprite @5,9 sprite:flower 0x0000001e

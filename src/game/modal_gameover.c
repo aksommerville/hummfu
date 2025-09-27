@@ -4,6 +4,9 @@
  */
 
 void gameover_update(struct gameover *gameover,double elapsed,int input,int pvinput) {
+  if ((input&EGG_BTN_SOUTH)&&!(pvinput&EGG_BTN_SOUTH)) {
+    scene_begin(&g.scene,1);
+  }
   //TODO
 }
 

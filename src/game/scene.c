@@ -1,6 +1,7 @@
 #include "hummfu.h"
 
 #define STRIKE_HIGHLIGHT_TIME 0.100
+#define WIN_COLOR 0x10662000
 
 /* Update.
  */
@@ -25,12 +26,25 @@ void scene_update(struct scene *scene,double elapsed,int input,int pvinput) {
   if (scene->deathclock>0.0) {
     scene->deathclock+=elapsed;
   }
+  if (scene->winclock>0.0) {
+    scene->winclock+=elapsed;
+  }
 
   if (input!=pvinput) {
-    if (scene->hero) sprite_hero_input(scene->hero,input,pvinput);
-    else if (scene->deathclock>=0.500) {
+    if (scene->hero) {
+      if (scene->winclock>0.0) sprite_hero_input(scene->hero,0,pvinput);
+      else sprite_hero_input(scene->hero,input,pvinput);
+    } else if (scene->deathclock>=0.500) {
       if ((input&EGG_BTN_SOUTH)&&!(pvinput&EGG_BTN_SOUTH)) {
         scene_begin(scene,scene->mapid);
+      }
+    }
+    if (scene->winclock>1.000) {
+      if ((input&EGG_BTN_SOUTH)&&!(pvinput&EGG_BTN_SOUTH)) {
+        if (scene_begin(scene,scene->mapid+1)<0) {
+          gameover_begin(&g.gameover);
+          return;
+        }
       }
     }
   }
@@ -111,11 +125,16 @@ void scene_render(struct scene *scene) {
   }
   
   /* When the death clock has advanced pretty far (bg already red), fade in another red overlay to make the foreground appear to fade out.
+   * Victory clock, same idea.
    */
   if (scene->deathclock>2.000) {
     int alpha=(scene->deathclock-2.0)*64.0;
     if (alpha<0) alpha=0; else if (alpha>0xc0) alpha=0xc0;
     graf_fill_rect(&g.graf,0,0,FBW,FBH,0x80102000|alpha);
+  } else if (scene->winclock>0.500) {
+    int alpha=((scene->winclock-0.500)*256.0);
+    if (alpha<0) alpha=0; else if (alpha>0xe0) alpha=0xe0;
+    graf_fill_rect(&g.graf,0,0,FBW,FBH,WIN_COLOR|alpha);
   }
   
   /* TODO Overlay?
@@ -225,6 +244,7 @@ int scene_begin(struct scene *scene,int mapid) {
   }
   scene->strikeclock=0.0;
   scene->deathclock=0.0;
+  scene->winclock=0.0;
   
   struct cmdlist_reader reader;
   if (cmdlist_reader_init(&reader,res.cmd,res.cmdc)<0) return -1;
@@ -260,5 +280,11 @@ void scene_highlight_strike(struct scene *scene,double x,double y) {
  */
  
 void scene_begin_death(struct scene *scene) {
+  if ((scene->winclock>0.0)||(scene->deathclock>0.0)) return;
   scene->deathclock=0.001;
+}
+
+void scene_begin_victory(struct scene *scene) {
+  if ((scene->winclock>0.0)||(scene->deathclock>0.0)) return;
+  scene->winclock=0.001;
 }
