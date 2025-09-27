@@ -47,7 +47,11 @@ static void _flower_update(struct sprite *sprite,double elapsed) {
     sprite->tileid=SPRITE->bloomed?SPRITE->win_tileid:SPRITE->tileid0;
   }
 
-  if (SPRITE->bloomed) return;
+  if (SPRITE->bloomed) {
+    if ((SPRITE->win_tileid==0x1d)&&!g.scene.hero) sprite->tileid=0x3b;
+    return;
+  }
+  
   if (!g.scene.hero) return;
   const double radius=0.500;
   double dx=g.scene.hero->x-sprite->x;

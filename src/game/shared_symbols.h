@@ -34,6 +34,8 @@
 #define NS_sprtype_title 6
 #define NS_sprtype_alien 7
 #define NS_sprtype_laser 8
+#define NS_sprtype_bear 9
+#define NS_sprtype_explosion 10
 
 #define FOR_EACH_SPRTYPE \
   _(dummy) \
@@ -44,6 +46,8 @@
   _(toast) \
   _(title) \
   _(alien) \
-  _(laser)
+  _(laser) \
+  _(bear) \
+  _(explosion)
 
 #endif

@@ -1,0 +1,3 @@
+type (u16:sprtype)explosion
+image image:sprites
+tile 0x60 0
