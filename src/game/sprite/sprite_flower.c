@@ -21,6 +21,10 @@ static int _flower_init(struct sprite *sprite) {
     fprintf(stderr,"flower sprite requires a different win_tileid\n");
     return -1;
   }
+  sprite->pl=-0.333;
+  sprite->pr= 0.333;
+  sprite->pt=-0.333;
+  sprite->pb= 0.333;
   return 0;
 }
 
@@ -61,6 +65,7 @@ static void _flower_update(struct sprite *sprite,double elapsed) {
 
 static int _flower_strike(struct sprite *sprite,struct sprite *assailant) {
   if (!assailant) return 0;
+  if (SPRITE->shockclock>0.0) return 0;
   SPRITE->shockclock=0.333;
   sprite->tileid=SPRITE->bloomed?SPRITE->win_tileid:SPRITE->tileid0;
   if (assailant->x<sprite->x) {

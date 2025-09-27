@@ -49,6 +49,7 @@ static int _hero_init(struct sprite *sprite) {
  
 static void hero_die(struct sprite *sprite) {
   if (g.scene.winclock>0.0) return;
+  egg_play_sound(RID_sound_deadbird,0.5,0.0);
   scene_begin_death(&g.scene);
   sprite->defunct=1;
   
@@ -80,7 +81,7 @@ static int hero_can_swing(const struct sprite *sprite) {
 }
 
 static int hero_strike_foes(struct sprite *sprite) {
-  const double width=0.700; // Extension from sprite's forward physical edge.
+  const double width=0.750; // Extension from sprite's forward physical edge.
   double t=sprite->y+sprite->pt;
   double b=sprite->y+sprite->pb;
   double l,r;
@@ -98,6 +99,7 @@ static int hero_strike_foes(struct sprite *sprite) {
     struct sprite *victim=*p;
     if (!victim->type->strike) continue;
     if (victim->defunct) continue;
+    if (victim==sprite) continue;
     double vl=victim->x+victim->pl; if (vl>=r) continue;
     double vr=victim->x+victim->pr; if (vr<=l) continue;
     double vt=victim->y+victim->pt; if (vt>=b) continue;
@@ -266,6 +268,14 @@ static void _hero_update(struct sprite *sprite,double elapsed) {
   hero_animate(sprite,elapsed);
 }
 
+/* Get struck.
+ */
+ 
+static int _hero_strike(struct sprite *sprite,struct sprite *assailant) {
+  hero_die(sprite);
+  return 1;
+}
+
 /* Type definition.
  */
  
@@ -275,4 +285,5 @@ const struct sprite_type sprite_type_hero={
   .del=_hero_del,
   .init=_hero_init,
   .update=_hero_update,
+  .strike=_hero_strike,
 };

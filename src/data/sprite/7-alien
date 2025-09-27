@@ -1,0 +1,3 @@
+type (u16:sprtype)alien
+image image:sprites
+tile 34 0

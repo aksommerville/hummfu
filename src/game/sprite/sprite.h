@@ -58,6 +58,8 @@ const struct sprite_type *sprite_type_by_id(int sprtype);
 
 void sprite_hero_input(struct sprite *sprite,int input,int pvinput);
 
+void sprite_laser_set_owner(struct sprite *sprite,struct sprite *owner);
+
 /* Physics.
  ***************************************************************************************/
 

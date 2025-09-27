@@ -21,6 +21,7 @@
 #define NS_tilesheet_neighbors 0
 #define NS_tilesheet_weight 0
 
+#define NS_physics_vacant 0
 #define NS_physics_solid 1
 #define NS_physics_hazard 2
 
@@ -31,6 +32,8 @@
 #define NS_sprtype_flower 4
 #define NS_sprtype_toast 5
 #define NS_sprtype_title 6
+#define NS_sprtype_alien 7
+#define NS_sprtype_laser 8
 
 #define FOR_EACH_SPRTYPE \
   _(dummy) \
@@ -39,6 +42,8 @@
   _(soulball) \
   _(flower) \
   _(toast) \
-  _(title)
+  _(title) \
+  _(alien) \
+  _(laser)
 
 #endif
