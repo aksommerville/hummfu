@@ -15,18 +15,6 @@ void scene_update(struct scene *scene,double elapsed,int input,int pvinput) {
     }
   }
 
-  // When input_blackout in play, ignore those bits until they go false.
-  // This is how you can press Fly to restart after dying, and the new bird doesn't spawn flying.
-  if (scene->input_blackout) {
-    int bit=0x8000;
-    for (;bit;bit>>=1) {
-      if ((scene->input_blackout&bit)&&!(input&bit)) {
-        scene->input_blackout&=~bit;
-      }
-    }
-    input=pvinput=0;
-  }
-
   if (scene->strikeclock>0.0) {
     scene->strikeclock-=elapsed;
   }
@@ -242,7 +230,6 @@ struct sprite *scene_spawn_sprite(struct scene *scene,double x,double y,int spri
 
 int scene_begin(struct scene *scene,int mapid) {
 
-  scene->input_blackout=g.pvinput&~EGG_BTN_CD;
   egg_play_song(RID_song_whipblade,0,1);
   
   // Reloading the same scene wipes out a few score things.

@@ -43,12 +43,13 @@ static void flower_check_completion() {
 static void _flower_update(struct sprite *sprite,double elapsed) {
 
   if (SPRITE->shockclock>0.0) {
-    if ((SPRITE->shockclock-=elapsed)>0.0) return;
-    sprite->tileid=SPRITE->bloomed?SPRITE->win_tileid:SPRITE->tileid0;
+    if ((SPRITE->shockclock-=elapsed)<=0.0) {
+      sprite->tileid=SPRITE->bloomed?SPRITE->win_tileid:SPRITE->tileid0;
+    }
   }
-
+  
   if (SPRITE->bloomed) {
-    if ((SPRITE->win_tileid==0x1d)&&!g.scene.hero) sprite->tileid=0x3b;
+    if ((SPRITE->win_tileid==0x1d)&&!g.scene.hero&&(SPRITE->shockclock<=0.0)) sprite->tileid=0x3b;
     return;
   }
   

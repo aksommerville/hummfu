@@ -21,7 +21,6 @@ struct scene {
   double strikeclock;
   int strikex,strikey;
   double deathclock;
-  int input_blackout;
   double winclock;
   double fadein;
   

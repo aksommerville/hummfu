@@ -42,6 +42,7 @@ static int _hero_init(struct sprite *sprite) {
   SPRITE->qx=-1;
   SPRITE->qy=-1;
   sprite->y+=0.500-sprite->pb;
+  SPRITE->input=g.pvinput&(EGG_BTN_LEFT|EGG_BTN_RIGHT); // Allow LEFT and RIGHT to carry over. SOUTH must not.
   return 0;
 }
 
