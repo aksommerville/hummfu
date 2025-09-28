@@ -62,7 +62,7 @@ static int gameover_add_advice(struct gameover *gameover,int index,uint32_t rgba
   // Index 11 is the time advice. Replace '%' with the scorekeeper's best time.
   // All other strings are static.
   char tmp[256];
-  if (index==1) {
+  if (index==11) {
     int tmpc=0,textp=0;
     for (;textp<textc;textp++) {
       if (text[textp]=='%') {
@@ -183,6 +183,13 @@ static int repr_total(char *dst,int dsta,int *perfect,struct gameover *gameover)
   return SCORE_LENGTH;
 }
 
+static int repr_hiscore(char *dst,int dsta,int *perfect,struct gameover *gameover) {
+  if (memcmp(gameover->score,g.hiscore,SCORE_LENGTH)>=0) *perfect=1;
+  if (dsta<SCORE_LENGTH) return SCORE_LENGTH;
+  memcpy(dst,g.hiscore,SCORE_LENGTH);
+  return SCORE_LENGTH;
+}
+
 /* Nonzero if this framebuffer-strided buffer contains only full zeroes.
  */
  
@@ -217,6 +224,9 @@ static int gameover_generate_report(struct gameover *gameover) {
   gameover_render_report_line(gameover,rgbav,kright,row++,16,repr_killc);
   gameover_render_report_line(gameover,rgbav,kright,row++,17,repr_breakc);
   gameover_render_report_line(gameover,rgbav,kright,row++,18,repr_total);
+  if (!score_is_zero(g.hiscore)) {
+    gameover_render_report_line(gameover,rgbav,kright,row++,19,repr_hiscore);
+  }
   int x=0;
   while ((x<FBW)&&pixels_zero(rgbav+x,1,FBH)) x++;
   int w=FBW-x;

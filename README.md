@@ -34,5 +34,5 @@ For [Code For A Cause Micro Jam 2](https://itch.io/jam/cfac-x-micro-2), theme "T
 - [x] Consider nixing Hello modal, and instead make it the first level. Playable but all you can do is proceed.
 - [x] Hello modal.
 - [x] Gameover modal.
-- [ ] When aliens shoot a box they break it and you don't get the points. That's by design, but don't let it happen randomly.
+- [x] When aliens shoot a box they break it and you don't get the points. That's by design, but don't let it happen randomly.
 - - So, when the alien is going to shoot randomly, check for boxes first. If they're shooting because the hero is present, let it happen.

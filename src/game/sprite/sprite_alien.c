@@ -17,6 +17,7 @@ struct sprite_alien {
   double animclock;
   int animframe;
   double stallclock;
+  double random_shot_cooldown;
 };
 
 #define SPRITE ((struct sprite_alien*)sprite)
@@ -33,6 +34,7 @@ static int _alien_init(struct sprite *sprite) {
 }
 
 static void alien_fire_laser(struct sprite *sprite) {
+  SPRITE->random_shot_cooldown=1.000;
   sprite->tileid=SPRITE->tileid0;
   SPRITE->shootclock=0.500;
   egg_play_sound(RID_sound_laser,0.5,0.0);
@@ -40,6 +42,25 @@ static void alien_fire_laser(struct sprite *sprite) {
   if (sprite->xform&EGG_XFORM_XREV) laserx-=0.5; else laserx+=0.5;
   double lasery=sprite->y+0.200;
   struct sprite *laser=scene_spawn_sprite(&g.scene,laserx,lasery,RID_sprite_laser,sprite->xform);
+}
+
+/* Nonzero if there's something breakable in this rect.
+ * We don't want the alien shooting toward boxes randomly, since that cheats the player out of a score-bearing play.
+ * It's fine to shoot them when aiming for the hero; that's the hero's own fault.
+ */
+static int box_exists(double l,double t,double r,double b) {
+  struct sprite **p=g.scene.spritev;
+  int i=g.scene.spritec;
+  for (;i-->0;p++) {
+    struct sprite *box=*p;
+    if (box->defunct) continue;
+    if (box->y<t) continue;
+    if (box->y>b) continue;
+    if (box->x<l) continue;
+    if (box->x>r) continue;
+    if (score_type_for_spriteid(box->spriteid)=='b') return 1;
+  }
+  return 0;
 }
 
 static void alien_choose_next_move(struct sprite *sprite) {
@@ -62,10 +83,12 @@ static void alien_choose_next_move(struct sprite *sprite) {
     if (okr>=2) {
       optionv[optionc++]='r';
     }
-    if (sprite->xform&EGG_XFORM_XREV) {
-      if (okl>=4) optionv[optionc++]='g';
-    } else {
-      if (okr>=4) optionv[optionc++]='g';
+    if (SPRITE->random_shot_cooldown<=0.0) {
+      if (sprite->xform&EGG_XFORM_XREV) {
+        if ((okl>=1)&&!box_exists(0.0,sprite->y+sprite->pt,sprite->x,sprite->y+sprite->pb)) optionv[optionc++]='g';
+      } else {
+        if ((okr>=1)&&!box_exists(sprite->x,sprite->y+sprite->pt,NS_sys_mapw,sprite->y+sprite->pb)) optionv[optionc++]='g';
+      }
     }
   }
   if (!optionc) optionv[optionc++]='s';
@@ -92,6 +115,8 @@ static void alien_choose_next_move(struct sprite *sprite) {
 }
 
 static void _alien_update(struct sprite *sprite,double elapsed) {
+
+  if (SPRITE->random_shot_cooldown>0.0) SPRITE->random_shot_cooldown-=elapsed;
 
   if (SPRITE->hurtclock>0.0) {
     SPRITE->hurtclock+=elapsed;
