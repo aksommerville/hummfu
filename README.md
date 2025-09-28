@@ -22,7 +22,7 @@ For [Code For A Cause Micro Jam 2](https://itch.io/jam/cfac-x-micro-2), theme "T
 - [x] General sprite physics.
 - [x] Hero movement.
 - [x] Swing blade.
-- [ ] Monsters.
+- [x] Monsters. Bear and alien. Maybe that's enough? Make more if there's time.
 - [x] Destroyable static items.
 - [x] Static hazards.
 - [ ] Sound effects.
@@ -33,4 +33,5 @@ For [Code For A Cause Micro Jam 2](https://itch.io/jam/cfac-x-micro-2), theme "T
 - [x] Consider nixing Hello modal, and instead make it the first level. Playable but all you can do is proceed.
 - [x] Hello modal.
 - [ ] Gameover modal.
-
+- [ ] When aliens shoot a box they break it and you don't get the points. That's by design, but don't let it happen randomly.
+- - So, when the alien is going to shoot randomly, check for boxes first. If they're shooting because the hero is present, let it happen.

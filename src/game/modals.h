@@ -7,6 +7,7 @@
 struct gameover {
   int active;
   int msg_texid,msg_w,msg_h;
+  int new_hiscore;
 };
 
 void gameover_update(struct gameover *gameover,double elapsed,int input,int pvinput);

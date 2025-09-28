@@ -6,6 +6,8 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include "score.h"
+
 struct sprite;
 
 struct scene {
@@ -22,6 +24,14 @@ struct scene {
   int input_blackout;
   double winclock;
   double fadein;
+  
+  /* This score is per-level.
+   * When map:1 begins, we flush it to the defaults, and also flush (g.score).
+   * Beginning the same map again resets all but clock and death count.
+   * Beginning any other map commits what we have to (g.score) and resets completely.
+   * Statistics sources like sprite controllers may increment the counters here directly.
+   */
+  struct score score;
 };
 
 void scene_update(struct scene *scene,double elapsed,int input,int pvinput);

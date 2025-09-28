@@ -18,6 +18,28 @@ static void load_physics(const void *v,int c) {
   }
 }
 
+/* Update (g.killc_max,g.breakc_max) in light of a map resource.
+ */
+ 
+static void count_map_static_features(const void *v,int c) {
+  struct map_res map;
+  if (map_res_decode(&map,v,c)<0) return;
+  struct cmdlist_reader reader;
+  if (cmdlist_reader_init(&reader,map.cmd,map.cmdc)<0) return;
+  struct cmdlist_entry cmd;
+  while (cmdlist_reader_next(&cmd,&reader)>0) {
+    switch (cmd.opcode) {
+      case CMD_map_sprite: {
+          int spriteid=(cmd.arg[2]<<8)|cmd.arg[3];
+          switch (score_type_for_spriteid(spriteid)) {
+            case 'k': g.killc_max++;
+            case 'b': g.breakc_max++;
+          }
+        } break;
+    }
+  }
+}
+
 /* Init.
  */
 
@@ -48,6 +70,7 @@ int egg_client_init() {
     g.resv[g.resc++]=res;
     // As long as we're iterating these, capture any global resources we need:
     if ((res.tid==EGG_TID_tilesheet)&&(res.rid==RID_tilesheet_terrain)) load_physics(res.v,res.c);
+    else if (res.tid==EGG_TID_map) count_map_static_features(res.v,res.c);
   }
   
   if (egg_texture_load_image(g.texid_sprites=egg_texture_new(),RID_image_sprites)<0) return -1;
@@ -57,9 +80,12 @@ int egg_client_init() {
   const char *msg;
   if (msg=font_add_image(g.font,RID_image_font9_0020,0x0020)) { fprintf(stderr,"ERROR: %s\n",msg); return -1; }
   
+  egg_store_get(g.hiscore,sizeof(g.hiscore),"hiscore",7);
+  score_force_valid(g.hiscore);
+  
   srand_auto();
 
-  if (scene_begin(&g.scene,RID_map_scratch/*1*/)<0) return -1;
+  if (scene_begin(&g.scene,/*RID_map_scratch*/1)<0) return -1;
   scene_no_fade_in(&g.scene);
 
   return 0;

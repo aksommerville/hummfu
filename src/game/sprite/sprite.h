@@ -15,6 +15,7 @@ struct sprite {
   const void *serial; // The entire resource we spawned from.
   int serialc;
   int defunct; // Aside from scene, this is the one and only way to delete a sprite.
+  int spriteid;
   
   int solid; // Nonzero to block other participating sprites.
   double pl,pr,pt,pb; // Hitbox, distance to each edge from (x,y). (pl,pt) are normally negative.
@@ -55,6 +56,13 @@ FOR_EACH_SPRTYPE
 #undef _
 
 const struct sprite_type *sprite_type_by_id(int sprtype);
+
+/* Classify a sprite resource for scorekeeping purposes.
+ *   'b': breakable
+ *   'k': killable
+ *   0: nothing
+ */
+char score_type_for_spriteid(int spriteid);
 
 void sprite_hero_input(struct sprite *sprite,int input,int pvinput);
 

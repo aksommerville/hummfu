@@ -56,3 +56,24 @@ const struct sprite_type *sprite_type_by_id(int sprtype) {
   }
   return 0;
 }
+
+/* Registry of sprite resource ids and how they behave re scorekeeping.
+ */
+ 
+char score_type_for_spriteid(int spriteid) {
+  /* A smart implementation would store these facts in the sprite resource.
+   * Totally doable, but it turns out to be inconvenient during startup, when we tabulate how many killable and breakable sprites exist.
+   * This is a jam game, don't overthink it.
+   */
+  if (spriteid>10) {
+    fprintf(stderr,"%s:%d: sprite:%d not known. If it's killable or breakable, please update source.\n",__FILE__,__LINE__,spriteid);
+  }
+  switch (spriteid) {
+    case RID_sprite_box:
+      return 'b';
+    case RID_sprite_alien:
+    case RID_sprite_bear:
+      return 'k';
+  }
+  return 0;
+}

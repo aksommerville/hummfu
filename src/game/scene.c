@@ -8,6 +8,13 @@
  
 void scene_update(struct scene *scene,double elapsed,int input,int pvinput) {
 
+  // The scorekeeping clock ticks when we're not map:hello and neither (winclock) nor (deathclock) is ticking.
+  if (scene->mapid!=RID_map_hello) {
+    if ((scene->deathclock<=0.0)&&(scene->winclock<=0.0)) {
+      scene->score.time+=elapsed;
+    }
+  }
+
   // When input_blackout in play, ignore those bits until they go false.
   // This is how you can press Fly to restart after dying, and the new bird doesn't spawn flying.
   if (scene->input_blackout) {
@@ -224,6 +231,7 @@ struct sprite *scene_spawn_sprite(struct scene *scene,double x,double y,int spri
   
   struct sprite *sprite=sprite_new(type,x,y,arg,serial,serialc);
   if (!sprite) return 0;
+  sprite->spriteid=spriteid;
   scene->spritev[scene->spritec++]=sprite;
   if (sprite->type==&sprite_type_hero) scene->hero=sprite;
   return sprite;
@@ -236,6 +244,22 @@ int scene_begin(struct scene *scene,int mapid) {
 
   scene->input_blackout=g.pvinput&~EGG_BTN_CD;
   egg_play_song(RID_song_whipblade,0,1);
+  
+  // Reloading the same scene wipes out a few score things.
+  if (mapid==scene->mapid) {
+    scene->score.killc=0;
+    scene->score.breakc=0;
+  // Reloading a new scene transfers to the session and wipes everything.
+  } else {
+    g.score.killc+=scene->score.killc;
+    g.score.breakc+=scene->score.breakc;
+    g.score.time+=scene->score.time;
+    g.score.deathc+=scene->score.deathc;
+    scene->score.killc=0;
+    scene->score.breakc=0;
+    scene->score.time=0.0;
+    scene->score.deathc=0;
+  }
   
   // Acquire the resource and render background.
   const void *serial=0;

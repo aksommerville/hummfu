@@ -52,6 +52,7 @@ static void hero_die(struct sprite *sprite) {
   egg_play_sound(RID_sound_deadbird,0.5,0.0);
   scene_begin_death(&g.scene);
   sprite->defunct=1;
+  g.scene.score.deathc++;
   
   scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000000);
   scene_spawn_sprite(&g.scene,sprite->x,sprite->y,RID_sprite_soulball,0x00000040);
@@ -106,6 +107,10 @@ static int hero_strike_foes(struct sprite *sprite) {
     double vb=victim->y+victim->pb; if (vb<=t) continue;
     if (victim->type->strike(victim,sprite)) {
       victimc++;
+      switch (score_type_for_spriteid(victim->spriteid)) {
+        case 'k': g.scene.score.killc++; break;
+        case 'b': g.scene.score.breakc++; break;
+      }
     }
   }
   return victimc;
