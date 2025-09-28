@@ -4,10 +4,19 @@
 #ifndef MODALS_H
 #define MODALS_H
 
+#define GAMEOVER_LABEL_LIMIT 3
+
 struct gameover {
   int active;
-  int msg_texid,msg_w,msg_h;
-  int new_hiscore;
+  struct gameover_label {
+    int texid;
+    int x,y,w,h;
+    int blink;
+  } labelv[GAMEOVER_LABEL_LIMIT];
+  int labelc;
+  const void *strings; // strings:1
+  int stringsc;
+  char score[SCORE_LENGTH];
 };
 
 void gameover_update(struct gameover *gameover,double elapsed,int input,int pvinput);

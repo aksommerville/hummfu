@@ -25,9 +25,16 @@ int score_rate(char *dst,int dsta,const struct score *score);
 /* So you don't have to know how many digits.
  */
 int score_is_zero(const char *score);
+int score_is_perfect(const char *score);
 
 int score_is_valid(const char *score);
 
 void score_force_valid(char *score);
+
+/* -1,0,1 = worst, intermediate, best, according to the scoring thresholds.
+ */
+int score_rate_time(double s);
+
+double score_best_time();
 
 #endif

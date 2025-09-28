@@ -76,7 +76,6 @@ static void hero_die(struct sprite *sprite) {
  */
  
 static int hero_can_swing(const struct sprite *sprite) {
-  //if (SPRITE->flying) return 0;
   if (SPRITE->swingclock>0.0) return 0;
   return 1;
 }

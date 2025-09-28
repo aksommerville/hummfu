@@ -32,8 +32,8 @@ static void count_map_static_features(const void *v,int c) {
       case CMD_map_sprite: {
           int spriteid=(cmd.arg[2]<<8)|cmd.arg[3];
           switch (score_type_for_spriteid(spriteid)) {
-            case 'k': g.killc_max++;
-            case 'b': g.breakc_max++;
+            case 'k': g.killc_max++; break;
+            case 'b': g.breakc_max++; break;
           }
         } break;
     }

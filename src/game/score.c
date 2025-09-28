@@ -1,7 +1,7 @@
 #include "game/hummfu.h"
 
-#define TIME_WORST 60.000 /* TODO Maximum session duration, for the time bonus. */
-#define TIME_BEST  30.000 /* TODO Session time to get the maximum time bonus -- find my personal best and subtract a little, should be achievable but very hard. */
+#define TIME_WORST 20.000 /* TODO Maximum session duration, for the time bonus. */
+#define TIME_BEST  10.000 /* TODO Session time to get the maximum time bonus -- find my personal best and subtract a little, should be achievable but very hard. */
 #define TIME_BONUS_MAX  500000.0 /* Time bonus, if you reach TIME_BEST. The other end is zero. */
 #define KILL_BONUS_MAX  250000.0 /* Extra points for killing every monster. */
 #define BREAK_BONUS_MAX 250000.0 /* Extra points for breaking every box. */
@@ -32,6 +32,23 @@ int score_rate(char *dst,int dsta,const struct score *score) {
   else if (points<=1.0) n=1;
   else n=(int)points;
   
+  // One more thing, in case the formula is imperfect: A saturated score must not be possible if any of the quantum fields is imperfect.
+  if (n==999999) {
+    if (
+      score->deathc||
+      (score->killc<g.killc_max)||
+      (score->breakc<g.breakc_max)
+    ) n=999998;
+  // And just to be consistent, check it the other way too: If each constituent is perfect, the outcome must be too. This includes time.
+  } else {
+    if (
+      !score->deathc&&
+      (score->killc>=g.killc_max)&&
+      (score->breakc>=g.breakc_max)&&
+      (score->time<=TIME_BEST)
+    ) n=999999;
+  }
+  
   if (dsta>=6) {
     dst[0]='0'+(n/100000)%10;
     dst[1]='0'+(n/ 10000)%10;
@@ -53,6 +70,12 @@ int score_is_zero(const char *score) {
   return memcmp(score,zero,SCORE_LENGTH)?0:1;
 }
 
+int score_is_perfect(const char *score) {
+  char nines[SCORE_LENGTH];
+  memset(nines,'9',SCORE_LENGTH);
+  return memcmp(score,nines,SCORE_LENGTH)?0:1;
+}
+
 int score_is_valid(const char *score) {
   int i=SCORE_LENGTH;
   for (;i-->0;score++) {
@@ -65,4 +88,14 @@ int score_is_valid(const char *score) {
 void score_force_valid(char *score) {
   if (score_is_valid(score)) return;
   memset(score,'0',SCORE_LENGTH);
+}
+
+int score_rate_time(double time) {
+  if (time<=TIME_BEST) return 1;
+  if (time>=TIME_WORST) return -1;
+  return 0;
+}
+
+double score_best_time() {
+  return TIME_BEST;
 }

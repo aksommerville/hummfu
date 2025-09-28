@@ -5,7 +5,7 @@
  
 #include "game/hummfu.h"
 
-#define LABEL_LIMIT 3
+#define LABEL_LIMIT 4
 
 struct sprite_title {
   struct sprite hdr;
@@ -36,6 +36,8 @@ static int title_add_label(struct sprite *sprite,const char *src,int srcc) {
 
 static int _title_init(struct sprite *sprite) {
 
+  const char *hspfx=0;
+  int hspfxc=0;
   const void *serial=0;
   int serialc=hummfu_get_res(&serial,EGG_TID_strings,(egg_prefs_get(EGG_PREF_LANG)<<6)|1);
   struct strings_reader reader;
@@ -44,7 +46,16 @@ static int _title_init(struct sprite *sprite) {
     while (strings_reader_next(&string,&reader)>0) {
       switch (string.index) {
         case 3: case 4: case 5: title_add_label(sprite,string.v,string.c); break;
+        case 6: hspfx=string.v; hspfxc=string.c; break;
       }
+    }
+  }
+  
+  if (!score_is_zero(g.hiscore)) {
+    char tmp[256];
+    int tmpc=snprintf(tmp,sizeof(tmp),"%.*s %.*s",hspfxc,hspfx,SCORE_LENGTH,g.hiscore);
+    if ((tmpc>0)&&(tmpc<sizeof(tmp))) {
+      title_add_label(sprite,tmp,tmpc);
     }
   }
   
