@@ -184,9 +184,13 @@ static int repr_total(char *dst,int dsta,int *perfect,struct gameover *gameover)
 }
 
 static int repr_hiscore(char *dst,int dsta,int *perfect,struct gameover *gameover) {
-  if (memcmp(gameover->score,g.hiscore,SCORE_LENGTH)>=0) *perfect=1;
   if (dsta<SCORE_LENGTH) return SCORE_LENGTH;
-  memcpy(dst,g.hiscore,SCORE_LENGTH);
+  if (memcmp(gameover->score,g.hiscore,SCORE_LENGTH)>=0) {
+    *perfect=1;
+    memcpy(dst,gameover->score,SCORE_LENGTH);
+  } else {
+    memcpy(dst,g.hiscore,SCORE_LENGTH);
+  }
   return SCORE_LENGTH;
 }
 
@@ -225,6 +229,7 @@ static int gameover_generate_report(struct gameover *gameover) {
   gameover_render_report_line(gameover,rgbav,kright,row++,17,repr_breakc);
   gameover_render_report_line(gameover,rgbav,kright,row++,18,repr_total);
   if (!score_is_zero(g.hiscore)) {
+    row++;
     gameover_render_report_line(gameover,rgbav,kright,row++,19,repr_hiscore);
   }
   int x=0;

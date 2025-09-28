@@ -59,7 +59,7 @@ static void _flower_update(struct sprite *sprite,double elapsed) {
   double dy=g.scene.hero->y-sprite->y;
   if ((dy<-radius)||(dy>radius)) return;
   double pan=(sprite->x*2.0)/NS_sys_mapw-1.0;
-  egg_play_sound(RID_sound_bloom,0.5,pan);
+  egg_play_sound(RID_sound_bloom,1.0,pan);
   sprite->tileid=SPRITE->win_tileid;
   SPRITE->bloomed=1;
   scene_spawn_sprite(&g.scene,sprite->x,sprite->y-0.500,RID_sprite_flowerlove,0);
@@ -77,7 +77,7 @@ static int _flower_strike(struct sprite *sprite,struct sprite *assailant) {
   } else {
     sprite->tileid+=0x10;
   }
-  return 0; // Always zero, this is an inert reaction.
+  return 1;
 }
 
 const struct sprite_type sprite_type_flower={

@@ -57,7 +57,8 @@ static void _laser_update(struct sprite *sprite,double elapsed) {
     if (sprite->y<victim->y+victim->pt) continue;
     if (sprite->y>victim->y+victim->pb) continue;
     if (victim->type->strike(victim,sprite)) {
-      sprite->defunct=1;
+      if (victim->type==&sprite_type_flower) ; // Pass thru flowers.
+      else sprite->defunct=1;
       return;
     }
   }

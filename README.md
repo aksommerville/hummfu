@@ -25,7 +25,8 @@ For [Code For A Cause Micro Jam 2](https://itch.io/jam/cfac-x-micro-2), theme "T
 - [x] Monsters. Bear and alien. Maybe that's enough? Make more if there's time.
 - [x] Destroyable static items.
 - [x] Static hazards.
-- [ ] Sound effects.
+- [x] Sound effects.
+- [ ] Sticking to the wall here and there, feels like a rounding error. Easily exposed in map:2, near the SW corner.
 - [ ] Flight training level, fly thru the rings or something.
 - [ ] Combat training level, whack cardboard cutouts when they pop up. (but not the nun or the child, just the gangsters).
 - [ ] Final levels. Probably like 20? I expect them to play really fast.

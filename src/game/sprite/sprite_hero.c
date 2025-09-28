@@ -17,6 +17,7 @@ struct sprite_hero {
   double swingclock; // Counts up. Set ever so slighly positive to start the animation. All effects happen at the start.
   int qx,qy;
   int input,pvinput;
+  double flapclock;
 };
 
 #define SPRITE ((struct sprite_hero*)sprite)
@@ -49,7 +50,7 @@ static int _hero_init(struct sprite *sprite) {
  
 static void hero_die(struct sprite *sprite) {
   if (g.scene.winclock>0.0) return;
-  egg_play_sound(RID_sound_deadbird,0.5,0.0);
+  egg_play_sound(RID_sound_deadbird,1.0,0.0);
   scene_begin_death(&g.scene);
   sprite->defunct=1;
   g.scene.score.deathc++;
@@ -126,12 +127,12 @@ void sprite_hero_input(struct sprite *sprite,int input,int pvinput) {
       SPRITE->swingclock=0.001; // Start animation.
       scene_highlight_strike(&g.scene,sprite->x+((sprite->xform&EGG_XFORM_XREV)?-0.250:0.250),sprite->y);
       if (hero_strike_foes(sprite)) {
-        egg_play_sound(RID_sound_swinghit,0.5,0.0);
+        egg_play_sound(RID_sound_swinghit,1.0,0.0);
       } else {
-        egg_play_sound(RID_sound_swingmiss,0.5,0.0);
+        egg_play_sound(RID_sound_swingmiss,1.0,0.0);
       }
     } else {
-      egg_play_sound(RID_sound_swingreject,0.5,0.0);
+      egg_play_sound(RID_sound_swingreject,1.0,0.0);
     }
   }
 }
@@ -180,16 +181,26 @@ static void hero_fly(struct sprite *sprite,double elapsed) {
     SPRITE->fanimclock+=0.050;
     if (++(SPRITE->fanimframe)>=6) SPRITE->fanimframe=0;
   }
+  if ((SPRITE->flapclock-=elapsed)<=0.0) {
+    SPRITE->flapclock+=0.100;
+    double pan=(sprite->x*2.0)/NS_sys_mapw-1.0;
+    egg_play_sound(RID_sound_flap,1.0,pan);
+  }
 }
 
 static void hero_fly_none(struct sprite *sprite,double elapsed) {
+  SPRITE->flapclock=0.0;
   SPRITE->flying=0;
   SPRITE->gravity+=GRAVITY_ACCEL*elapsed;
   if (SPRITE->gravity>=GRAVITY_LIMIT) SPRITE->gravity=GRAVITY_LIMIT;
   if (!sprite_move(sprite,0.0,SPRITE->gravity*elapsed)) {
     // Hit floor.
-    SPRITE->seated=1;
     SPRITE->gravity=GRAVITY_START;
+    if (!SPRITE->seated) {
+      SPRITE->seated=1;
+      double pan=(sprite->x*2.0)/NS_sys_mapw-1.0;
+      egg_play_sound(RID_sound_thump,1.0,pan);
+    }
   } else {
     // Falling.
     SPRITE->seated=0;

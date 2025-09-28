@@ -37,7 +37,7 @@ static void alien_fire_laser(struct sprite *sprite) {
   SPRITE->random_shot_cooldown=1.000;
   sprite->tileid=SPRITE->tileid0;
   SPRITE->shootclock=0.500;
-  egg_play_sound(RID_sound_laser,0.5,0.0);
+  egg_play_sound(RID_sound_laser,1.0,0.0);
   double laserx=sprite->x;
   if (sprite->xform&EGG_XFORM_XREV) laserx-=0.5; else laserx+=0.5;
   double lasery=sprite->y+0.200;
