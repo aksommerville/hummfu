@@ -59,8 +59,7 @@ static void _flower_update(struct sprite *sprite,double elapsed) {
   if ((dx<-radius)||(dx>radius)) return;
   double dy=g.scene.hero->y-sprite->y;
   if ((dy<-radius)||(dy>radius)) return;
-  double pan=(sprite->x*2.0)/NS_sys_mapw-1.0;
-  egg_play_sound(RID_sound_bloom,1.0,pan);
+  hummfu_sfx_spatial(RID_sound_bloom,sprite->x);
   sprite->tileid=SPRITE->win_tileid;
   SPRITE->bloomed=1;
   scene_spawn_sprite(&g.scene,sprite->x,sprite->y-0.500,RID_sprite_flowerlove,0);

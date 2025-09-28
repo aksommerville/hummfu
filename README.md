@@ -37,4 +37,4 @@ For [Code For A Cause Micro Jam 2](https://itch.io/jam/cfac-x-micro-2), theme "T
 - [x] Gameover modal.
 - [x] When aliens shoot a box they break it and you don't get the points. That's by design, but don't let it happen randomly.
 - - So, when the alien is going to shoot randomly, check for boxes first. If they're shooting because the hero is present, let it happen.
-- [ ] Mitigate sound effects playing close together. Sometimes noticeable when you enter a level with lots of aliens.
+- [x] Mitigate sound effects playing close together. Sometimes noticeable when you enter a level with lots of aliens.

@@ -16,7 +16,7 @@ struct sprite_explosion {
 #define SPRITE ((struct sprite_explosion*)sprite)
 
 static int _explosion_init(struct sprite *sprite) {
-  egg_play_sound(RID_sound_explode,1.0,0.0);
+  hummfu_sfx(RID_sound_explode);
   SPRITE->ttl=2.0;
   return 0;
 }

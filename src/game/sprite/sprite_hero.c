@@ -51,7 +51,7 @@ static int _hero_init(struct sprite *sprite) {
  
 static void hero_die(struct sprite *sprite) {
   if (g.scene.winclock>0.0) return;
-  egg_play_sound(RID_sound_deadbird,1.0,0.0);
+  hummfu_sfx(RID_sound_deadbird);
   scene_begin_death(&g.scene);
   sprite->defunct=1;
   g.scene.score.deathc++;
@@ -128,12 +128,12 @@ void sprite_hero_input(struct sprite *sprite,int input,int pvinput) {
       SPRITE->swingclock=0.001; // Start animation.
       scene_highlight_strike(&g.scene,sprite->x+((sprite->xform&EGG_XFORM_XREV)?-0.250:0.250),sprite->y);
       if (hero_strike_foes(sprite)) {
-        egg_play_sound(RID_sound_swinghit,1.0,0.0);
+        hummfu_sfx(RID_sound_swinghit);
       } else {
-        egg_play_sound(RID_sound_swingmiss,1.0,0.0);
+        hummfu_sfx(RID_sound_swingmiss);
       }
     } else {
-      egg_play_sound(RID_sound_swingreject,1.0,0.0);
+      hummfu_sfx(RID_sound_swingreject);
     }
   }
 }
@@ -184,8 +184,7 @@ static void hero_fly(struct sprite *sprite,double elapsed) {
   }
   if ((SPRITE->flapclock-=elapsed)<=0.0) {
     SPRITE->flapclock+=0.100;
-    double pan=(sprite->x*2.0)/NS_sys_mapw-1.0;
-    egg_play_sound(RID_sound_flap,1.0,pan);
+    hummfu_sfx_spatial(RID_sound_flap,sprite->x);
   }
 }
 
@@ -199,8 +198,7 @@ static void hero_fly_none(struct sprite *sprite,double elapsed) {
     SPRITE->gravity=GRAVITY_START;
     if (!SPRITE->seated) {
       SPRITE->seated=1;
-      double pan=(sprite->x*2.0)/NS_sys_mapw-1.0;
-      egg_play_sound(RID_sound_thump,1.0,pan);
+      hummfu_sfx_spatial(RID_sound_thump,sprite->x);
     }
   } else {
     // Falling.

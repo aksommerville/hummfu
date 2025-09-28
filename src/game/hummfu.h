@@ -16,6 +16,8 @@
 #define FBW 320
 #define FBH 176
 
+#define SFXV_LIMIT 4
+
 extern struct g {
   void *rom;
   int romc;
@@ -37,9 +39,15 @@ extern struct g {
   // No generalized modes. We're doing one of these two things.
   struct scene scene;
   struct gameover gameover;
+  
+  int sfxv[SFXV_LIMIT];
+  int sfxc;
 } g;
 
 int hummfu_get_res(void *dstpp,int tid,int rid);
 int hummfu_load_label(int *w,int *h,int ix); // => texid; strings:1
+
+void hummfu_sfx(int soundid);
+void hummfu_sfx_spatial(int soundid,double x); // (x) in sprite or map space -- 0..NS_sys_mapw
 
 #endif

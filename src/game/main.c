@@ -95,6 +95,7 @@ int egg_client_init() {
  */
 
 void egg_client_update(double elapsed) {
+  g.sfxc=0;
 
   int input=egg_input_get_one(0);
   int pvinput=g.pvinput;
@@ -163,4 +164,24 @@ int hummfu_load_label(int *w,int *h,int ix) {
     return texid;
   }
   return 0;
+}
+
+/* Sound effects.
+ */
+ 
+void hummfu_sfx(int soundid) {
+  int *p=g.sfxv;
+  int i=g.sfxc;
+  for (;i-->0;p++) if (*p==soundid) return;
+  if (g.sfxc<SFXV_LIMIT) g.sfxv[g.sfxc++]=soundid;
+  egg_play_sound(soundid,1.0,0.0);
+}
+
+void hummfu_sfx_spatial(int soundid,double x) {
+  int *p=g.sfxv;
+  int i=g.sfxc;
+  for (;i-->0;p++) if (*p==soundid) return;
+  if (g.sfxc<SFXV_LIMIT) g.sfxv[g.sfxc++]=soundid;
+  double pan=(x*2.0)/NS_sys_mapw-1.0;
+  egg_play_sound(soundid,1.0,pan);
 }
