@@ -38,8 +38,8 @@ static double nearest_grid_collision(const struct sprite *sprite,uint8_t dir) {
   double t=sprite->y+sprite->pt;
   double b=sprite->y+sprite->pb;
   const double fudge=0.001;
-  int cola=(int)l; if (cola<0) cola=0;
-  int rowa=(int)t; if (rowa<0) rowa=0;
+  int cola=(int)(l+fudge); if (cola<0) cola=0;
+  int rowa=(int)(t+fudge); if (rowa<0) rowa=0;
   int colz=(int)(r-fudge); if (colz>=NS_sys_mapw) colz=NS_sys_mapw-1;
   int rowz=(int)(b-fudge); if (rowz>=NS_sys_maph) rowz=NS_sys_maph-1;
   if ((cola>colz)||(rowa>rowz)) return 0.0;
