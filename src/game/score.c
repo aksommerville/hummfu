@@ -1,7 +1,7 @@
 #include "game/hummfu.h"
 
-#define TIME_WORST 60.000 /* TODO Maximum session duration, for the time bonus. */
-#define TIME_BEST  30.000 /* TODO Session time to get the maximum time bonus -- find my personal best and subtract a little, should be achievable but very hard. */
+#define TIME_WORST 120.000 /* Maximum session duration, for the time bonus. */
+#define TIME_BEST   60.000 /* Session time to get the maximum time bonus. This is hard to full-clear, but totally possible. And so nice and round. */
 #define TIME_BONUS_MAX  500000.0 /* Time bonus, if you reach TIME_BEST. The other end is zero. */
 #define KILL_BONUS_MAX  250000.0 /* Extra points for killing every monster. */
 #define BREAK_BONUS_MAX 250000.0 /* Extra points for breaking every box. */

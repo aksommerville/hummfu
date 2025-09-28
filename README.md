@@ -27,13 +27,14 @@ For [Code For A Cause Micro Jam 2](https://itch.io/jam/cfac-x-micro-2), theme "T
 - [x] Static hazards.
 - [x] Sound effects.
 - [x] Sticking to the wall here and there, feels like a rounding error. Easily exposed in map:2, near the SW corner.
-- [ ] Flight training level, fly thru the rings or something.
-- [ ] Combat training level, whack cardboard cutouts when they pop up. (but not the nun or the child, just the gangsters).
-- [ ] Final levels. Probably like 20? I expect them to play really fast.
-- [ ] Tune time-bonus times. (score.c)
+- [x] Flight training level, fly thru the rings or something. ...meh
+- [x] Combat training level, whack cardboard cutouts when they pop up. (but not the nun or the child, just the gangsters). ...meh
+- [x] Final levels. Probably like 20? I expect them to play really fast. ...ended up with 10 (9 real ones), and that feels good.
+- [x] Tune time-bonus times. (score.c)
 - [x] Scorekeeping.
 - [x] Consider nixing Hello modal, and instead make it the first level. Playable but all you can do is proceed.
 - [x] Hello modal.
 - [x] Gameover modal.
 - [x] When aliens shoot a box they break it and you don't get the points. That's by design, but don't let it happen randomly.
 - - So, when the alien is going to shoot randomly, check for boxes first. If they're shooting because the hero is present, let it happen.
+- [ ] Mitigate sound effects playing close together. Sometimes noticeable when you enter a level with lots of aliens.

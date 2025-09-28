@@ -32,6 +32,19 @@ static void bear_eat_bird(struct sprite *sprite,struct sprite *bird) {
   SPRITE->animframe=0;
 }
 
+static int bear_toe_too_far(struct sprite *sprite) {
+  double x=sprite->x;
+  if (sprite->xform&EGG_XFORM_XREV) x+=sprite->pl; else x+=sprite->pr;
+  int col=(int)x;
+  if (col<0) col=0; else if (col>=NS_sys_mapw) col=NS_sys_mapw-1;
+  int row=(int)(sprite->y+sprite->pb+0.5);
+  if (row<0) row=0; else if (row>=NS_sys_maph) row=NS_sys_maph-1;
+  switch (g.physics[g.scene.map[row*NS_sys_mapw+col]]) {
+    case NS_physics_solid: return 0;
+    default: return 1;
+  }
+}
+
 static void _bear_update(struct sprite *sprite,double elapsed) {
 
   if (SPRITE->turnclock>0.0) {
@@ -53,6 +66,8 @@ static void _bear_update(struct sprite *sprite,double elapsed) {
   double dx=WALK_SPEED*elapsed;
   if (sprite->xform&EGG_XFORM_XREV) dx=-dx;
   if (!sprite_move(sprite,dx,0.0)) {
+    SPRITE->turnclock=0.500;
+  } else if (bear_toe_too_far(sprite)) {
     SPRITE->turnclock=0.500;
   }
   

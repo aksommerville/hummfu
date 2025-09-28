@@ -85,7 +85,7 @@ int egg_client_init() {
   
   srand_auto();
 
-  if (scene_begin(&g.scene,7)<0) return -1;
+  if (scene_begin(&g.scene,1)<0) return -1;
   scene_no_fade_in(&g.scene);
 
   return 0;
