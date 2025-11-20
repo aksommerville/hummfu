@@ -230,7 +230,7 @@ struct sprite *scene_spawn_sprite(struct scene *scene,double x,double y,int spri
 
 int scene_begin(struct scene *scene,int mapid) {
 
-  egg_play_song(RID_song_whipblade,0,1);
+  hummfu_song(RID_song_whipblade,1);
   
   // Reloading the same scene wipes out a few score things.
   if (mapid==scene->mapid) {

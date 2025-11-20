@@ -11,10 +11,12 @@ clean:;rm -rf mid out
 run:;$(EGGDEV) run
 web-run:all;$(EGGDEV) serve --htdocs=out/hummfu-web.zip --project=.
 edit:;$(EGGDEV) serve \
+  --htdocs=/build:out/%.*s-web.zip \
   --htdocs=/data:src/data \
   --htdocs=EGG_SDK/src/web \
   --htdocs=EGG_SDK/src/editor \
   --htdocs=src/editor \
   --htdocs=/out:out \
+  --htdocs=/synth.wasm:EGG_SDK/out/web/synth.wasm \
   --writeable=src/data \
   --project=.

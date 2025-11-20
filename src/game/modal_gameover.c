@@ -290,7 +290,7 @@ static int gameover_generate_report(struct gameover *gameover) {
 int gameover_begin(struct gameover *gameover) {
   g.scene.active=0;
   gameover->active=1;
-  egg_play_song(RID_song_peace_returns,0,0);
+  hummfu_song(RID_song_peace_returns,0);
   
   if (!gameover->strings) {
     gameover->stringsc=hummfu_get_res(&gameover->strings,EGG_TID_strings,(egg_prefs_get(EGG_PREF_LANG)<<6)|1);

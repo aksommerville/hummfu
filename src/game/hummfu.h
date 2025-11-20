@@ -42,6 +42,7 @@ extern struct g {
   
   int sfxv[SFXV_LIMIT];
   int sfxc;
+  int playing_song_id;
 } g;
 
 int hummfu_get_res(void *dstpp,int tid,int rid);
@@ -49,5 +50,6 @@ int hummfu_load_label(int *w,int *h,int ix); // => texid; strings:1
 
 void hummfu_sfx(int soundid);
 void hummfu_sfx_spatial(int soundid,double x); // (x) in sprite or map space -- 0..NS_sys_mapw
+void hummfu_song(int rid,int repeat);
 
 #endif

@@ -185,3 +185,9 @@ void hummfu_sfx_spatial(int soundid,double x) {
   double pan=(x*2.0)/NS_sys_mapw-1.0;
   egg_play_sound(soundid,1.0,pan);
 }
+
+void hummfu_song(int rid,int repeat) {
+  if (rid==g.playing_song_id) return;
+  g.playing_song_id=rid;
+  egg_play_song(1,rid,repeat,0.500f,0.0f);
+}
