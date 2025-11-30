@@ -5,6 +5,9 @@ struct g g={0};
 void egg_client_quit(int status) {
 }
 
+void egg_client_notify(int k,int v) {
+}
+
 /* Load the terrain tilesheet to (g.physics).
  */
  
