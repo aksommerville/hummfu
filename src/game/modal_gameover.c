@@ -220,7 +220,8 @@ static int gameover_generate_report(struct gameover *gameover) {
    * Take a framebuffer-sized buffer, fill it, and crop it to only the needful size.
    * This report gets centered in the framebuffer and drives the position of the other labels.
    */
-  uint32_t rgbav[FBW*FBH]={0};
+  uint32_t *rgbav=calloc(4,FBW*FBH);
+  if (!rgbav) return -1;
   int kright=FBW-80; // Key and value both align right in their respective columns. The *left* side will be cropped.
   int row=0;
   gameover_render_report_line(gameover,rgbav,kright,row++,14,repr_time);
@@ -239,9 +240,13 @@ static int gameover_generate_report(struct gameover *gameover) {
   while (h&&pixels_zero(rgbav+(h-1)*FBW,FBW,1)) h--;
   if ((w<1)||(h<1)) return -1;
   struct gameover_label *report=gameover_label_add(gameover);
-  if (!report) return -1;
-  if ((report->texid=egg_texture_new())<1) return -1;
-  if (egg_texture_load_raw(report->texid,w,h,FBW<<2,rgbav+x,sizeof(rgbav))<0) return -1;
+  if (!report) { free(rgbav); return -1; }
+  if ((report->texid=egg_texture_new())<1) { free(rgbav); return -1; }
+  if (egg_texture_load_raw(report->texid,w,h,FBW<<2,rgbav+x,FBW*FBH*4)<0) {
+    free(rgbav);
+    return -1;
+  }
+  free(rgbav);
   report->w=w;
   report->h=h;
   report->x=(FBW>>1)-(report->w>>1);
