@@ -88,7 +88,7 @@ int egg_client_init() {
   
   srand_auto();
 
-  if (scene_begin(&g.scene,1)<0) return -1;
+  if (scene_begin(&g.scene,RID_map_hello)<0) return -1;
   scene_no_fade_in(&g.scene);
 
   return 0;
@@ -103,15 +103,12 @@ void egg_client_update(double elapsed) {
   int input=egg_input_get_one(0);
   int pvinput=g.pvinput;
   if (input!=g.pvinput) {
-    if ((input&EGG_BTN_AUX1)&&!(pvinput&EGG_BTN_AUX1)) { //XXX Highly temporary: AUX1 to reload map
-      scene_begin(&g.scene,g.scene.mapid);
-    }
     g.pvinput=input;
   }
   
   if (g.scene.active) scene_update(&g.scene,elapsed,input,pvinput);
   else if (g.gameover.active) gameover_update(&g.gameover,elapsed,input,pvinput);
-  else if (scene_begin(&g.scene,1)<0) egg_terminate(1);
+  else if (scene_begin(&g.scene,RID_map_hello)<0) egg_terminate(1);
 }
 
 /* Render.

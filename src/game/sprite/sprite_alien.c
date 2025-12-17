@@ -13,6 +13,7 @@ struct sprite_alien {
   double targetx;
   double shootclock; // Counts down after shooting, while the muzzle flash is visible and we hold still.
   double hurtclock; // Counts up after injury.
+  double shockclock; // Counts down upon seeing the hero. If he's still there when we expire, shoot him.
   double hurtdx;
   double animclock;
   int animframe;
@@ -153,8 +154,17 @@ static void _alien_update(struct sprite *sprite,double elapsed) {
       int los=0;
       if (sprite->xform&EGG_XFORM_XREV) los=g.scene.hero->x<sprite->x;
       else los=g.scene.hero->x>sprite->x;
-      if (los) {
-        alien_fire_laser(sprite);
+      if (SPRITE->shockclock>0.0) {
+        if ((SPRITE->shockclock-=elapsed)<=0.0) {
+          sprite->tileid=SPRITE->tileid0;
+          if (los) {
+            alien_fire_laser(sprite);
+          }
+        }
+        return;
+      } else if (los) { // "A bird!"
+        SPRITE->shockclock=0.250;
+        sprite->tileid=SPRITE->tileid0+0x15;
         return;
       }
     }
