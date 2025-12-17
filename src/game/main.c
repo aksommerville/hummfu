@@ -192,5 +192,5 @@ void hummfu_sfx_spatial(int soundid,double x) {
 void hummfu_song(int rid,int repeat) {
   if (rid==g.playing_song_id) return;
   g.playing_song_id=rid;
-  egg_play_song(1,rid,repeat,0.500f,0.0f);
+  egg_play_song(1,rid,repeat,0.250f,0.0f);
 }
